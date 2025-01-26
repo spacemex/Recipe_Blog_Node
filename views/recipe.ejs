@@ -1,0 +1,144 @@
+<h1>Recipe</h1>
+<% if(recipe !== null) { %>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" style="text-decoration: none;">Recipe</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <%= recipe.name %>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Print Button -->
+    <button class="btn btn-primary mb-3" onclick="printRecipe()">Print Recipe</button>
+
+    <div id="recipe-content" class="row"> <!-- Added ID for easily targeting print area -->
+        <div class="col-12 col-md-4">
+            <img src="/uploads/<%- recipe.image %>" style="top: 20px;"
+                 alt="<%- recipe.image %>"
+                 class="img-fluid sticky-top" loading="lazy">
+        </div>
+
+        <div class="col-12 col-md-8">
+            <div class="row">
+                <div class="col-12">
+                    <h1>
+                        <%= recipe.name %>
+                    </h1>
+                </div>
+                <div class="col-12 mb-4">
+                    <i class="bi bi-tag"></i>
+                    <%- recipe.category %>
+                    <br> <br>
+                    <%- recipe.description %>
+                </div>
+                <div class="col-12">
+                    <h4>Ingredients</h4>
+                    <ul class="list-group list-group-flush">
+                        <% recipe.ingredients.forEach(function(ingredient, index) { %>
+                            <li class="list-group-item">
+                                <%= ingredient %>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </div>
+                <div class="col-12" style="white-space: pre-line;">
+                    <h4>Cooking Instructions</h4>
+                    <%- recipe.instructions %>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    </div>
+<% } else { %>
+    <p>No Items Found</p>
+<% } %>
+
+<script>
+    function printRecipe() {
+        // Get the content of the recipe
+        const content = document.getElementById('recipe-content').innerHTML;
+
+        // Open a new window for printing
+        const printWindow = window.open('', '', 'width=800,height=600');
+
+        // Write the printable content into the new window
+        printWindow.document.write(`
+            <html lang="en">
+                <head>
+                    <title>Print Recipe</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                            line-height: 1.6;
+                        }
+
+                        h1, h4 {
+                            margin: 10px 0;
+                        }
+
+                        img {
+                            display: block;
+                            margin: 10px auto;
+                            max-width: 300px; /* Smaller size for printing */
+                            height: auto;
+                            border: 1px solid #ccc;
+                            padding: 5px;
+                            border-radius: 5px;
+                        }
+
+                        /* Ingredients List */
+                        ul {
+                            padding-left: 20px;
+                            list-style-type: disc;
+                            margin: 10px 0;
+                        }
+
+                        .list-group-item {
+                            display: list-item !important; /* Ensure proper list formatting */
+                            margin-bottom: 5px;
+                            font-size: 1rem;
+                        }
+
+                        /* Instructions */
+                        .instructions {
+                            margin-top: 15px;
+                            padding: 10px;
+                            border: 1px solid #ccc;
+                            background-color: #f9f9f9;
+                            border-radius: 5px;
+                            white-space: pre-line; /* Preserve line breaks */
+                        }
+
+                        /* Center-align category and description */
+                        .category-description {
+                            margin-bottom: 15px;
+                            text-align: center;
+                        }
+
+                        /* Hide everything except the recipe content for print */
+                        @media print {
+                            body {
+                                background-color: white;
+                                color: black;
+                            }
+                            button {
+                                display: none;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${document.querySelector(".breadcrumb-item.active").innerText}</h1>
+                    ${content}
+                </body>
+            </html>
+        `);
+
+        // Trigger the print function
+        printWindow.document.close(); // Close the document (to finish writing)
+        printWindow.print();
+    }
+</script>
